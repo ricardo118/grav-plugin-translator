@@ -1,0 +1,48 @@
+{% extends 'partials/base-translators.html.twig' %}
+{% do assets.addJs('plugin://mde/js/translate.js', {group: 'bottom', priority: 9}) %}
+
+{% set title = 'Translating to ' ~ grav.language.getLanguageCode(translatableLang, 'name') %}
+{% set logo_classes = 'tight' %}
+{% set logout_classes = 'tight' %}
+
+{% block header %}{% endblock %}
+{% block row %}
+    <div class="col-12 col-sm-6 origin-lang">
+        <div class="bg"></div>
+        <div class="info-holder">
+            <div class="form-content">
+                <span>Original:</span>
+                <h3 class="mb-0">{{ grav.language.getLanguageCode(grav.language.getDefault(), 'name') }}</h3>
+                <a href="/translators">Change Page</a>
+                <hr>
+                {% include 'partials/blueprints.html.twig' with { blueprints: default.blueprints, data: default, readonly: true} %}
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6">
+        <div class="form-content">
+            <div>
+                <span>Translating:</span>
+                <select class="custom-select mt-1" data-language>
+                    {% for lang in grav.user.translator %}
+                        <option value="{{ lang }}" {{ lang is same as(translatableLang) ? 'disabled selected' }}>{{ grav.language.getLanguageCode(lang, 'name')  }}</option>
+                    {% endfor %}
+                </select>
+                <a href="{{ url(uri.path) }}" data-change-language>Change Language to</a>
+                <hr>
+                {% include 'partials/blueprints.html.twig' with {form_id: 'translated', blueprints: translatable.blueprints, data: translatable } %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+<div class="footer">
+    {% include 'partials/messages.html.twig' with {classes: 'translate'} %}
+    <div class="translator-actions">
+        <button class="btn btn-primary" type="submit" form="translated" href="{{ uri.uri }}/task:translate.save" data-translate-save="{{ default.route }}/{{ translatable.name }}">Save</button>
+        <a class="btn btn-primary {{ hasSave ?: 'hide' }}" href="{{ url('/' ~ translatableLang ~ '/preview' ~ default.route) }}" target="_blank" data-preview>Preview</a>
+        <a class="btn btn-primary {{ hasSave ?: 'hide' }}" href="{{ uri.uri }}/task:translate.approval" data-approval="{{ url(default.route) }}" data-tooltip="Submit for Admin approval">Submit</a>
+    </div>
+</div>
+{% endblock %}

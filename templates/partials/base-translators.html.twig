@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="{{ grav.language.getActive ?: grav.config.site.default_lang }}">
+<head>
+    {% block head %}
+        <meta charset="utf-8" />
+        <title>{{ title ?: page.title }} | Translators Area</title>
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% include 'partials/metadata.html.twig' %}
+
+        <link rel="icon" type="image/png" href="{{ url('theme://images/logo.png') }}" />
+        <link rel="canonical" href="{{ page.url(true, true) }}" />
+    {% endblock head %}
+
+    {% block stylesheets %}
+        {% do assets.addCss('plugin://mde/css/bootstrap.min.css') %}
+        {% do assets.addCss('plugin://mde/css/fontawesome-all.min.css') %}
+        {% do assets.addCss('plugin://mde/css/iofrm-style.css') %}
+        {% do assets.addCss('plugin://mde/css/iofrm-theme7.css') %}
+    {% endblock %}
+
+    {% block javascripts %}
+        {% do assets.addJs('jquery', 100) %}
+        {% do assets.addJs('plugin://mde/js/jquery.splendid.textchange.js', {group: 'bottom'}) %}
+        {% do assets.addJs('plugin://mde/js/popper.min.js', {group: 'bottom'}) %}
+        {% do assets.addJs('plugin://mde/js/bootstrap.min.js', {group: 'bottom'}) %}
+        {% do assets.addJs('plugin://mde/js/main.js', {group: 'bottom'}) %}
+    {% endblock %}
+
+    {% block assets deferred %}
+    {{ assets.css()|raw }}
+    {{ assets.js()|raw }}
+    {% endblock %}
+</head>
+
+<body id="top" class="{{ page.header.body_classes }}">
+{% block header %}
+    <div class="header">
+        <div class="wrapper padding">
+            <a class="logo left" href="{{ home_url }}">
+                {{ title ?: page.title }}
+            </a>
+            {% block header_navigation %}
+                <nav class="main-nav">
+                    {% include 'partials/navigation.html.twig' %}
+                </nav>
+            {% endblock %}
+
+            {% if config.plugins.login.enabled and grav.user.username %}
+                <li><i class="fa fa-lock"></i> {% include 'partials/login-status.html.twig' %}</li>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="form-body">
+        <div class="website-logo {{ logo_classes }}">
+            <a href="/translators">
+                <div class="logo">
+                    <img class="logo-size" src="{{ url('plugin://mde/images/megadeals_logo.png') }}" alt="">
+                </div>
+            </a>
+        </div>
+        <div class="logout-section {{ logout_classes }}">
+            {% if config.plugins.login.enabled and grav.user.username %}
+                <li><i class="fa fa-lock"></i> {% include 'partials/login-status.html.twig' %}</li>
+            {% endif %}
+        </div>
+        <div class="row">
+            {% block row %}
+            <div class="img-holder">
+                <div class="bg"></div>
+                <div class="info-holder">
+                    {% block info %}
+                        <img src="{{ url('plugin://mde/images/graphic3.svg') }}" alt="">
+                        <h1>TRANSLATORS AREA</h1>
+                    {% endblock info %}
+                </div>
+            </div>
+            <div class="form-holder">
+                <div class="form-content">
+                    {% block content %}{% endblock content %}
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+{% endblock body %}
+
+{% block footer %}{% endblock %}
+
+{% block bottom %}
+    {{ assets.js('bottom')|raw }}
+{% endblock %}
+</body>
+</html>

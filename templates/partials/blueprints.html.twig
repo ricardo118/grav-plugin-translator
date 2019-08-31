@@ -1,0 +1,28 @@
+{% import 'macros/blueprints.html.twig' as macros %}
+
+{% set form_id = form_id ? form_id : 'blueprints' %}
+{% set scope = scope ?: 'data.' %}
+{% set untranslatable = config.plugins.mde.untranslatable_fields %}
+
+<form id="{{ form_id }}" method="post" data-grav-form="{{ form_id }}" data-grav-keepalive="true"{{ multipart|raw }}>
+
+        {{ macros.fields_loop(blueprints.fields.tabs.fields.content.fields, data, untranslatable, readonly) }}
+
+        {% if data.extra %}
+        {% for name, value in data.extra %}
+            {% if name not in ['_json','task','admin-nonce'] %}
+                {% set field = {name: '_json.' ~ name} %}
+                {% set value = value|raw|json_encode %}
+                {% include 'forms/fields/hidden/hidden.html.twig' %}
+            {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        {% if form %}
+            {% include "forms/fields/formname/formname.html.twig" %}
+            {% include 'forms/fields/uniqueid/uniqueid.html.twig' %}
+            {{ nonce_field(form.getNonceAction(), form.getNonceName())|raw }}
+        {% else %}
+            {{ nonce_field('admin-form', 'admin-nonce')|raw }}
+        {% endif %}
+</form>

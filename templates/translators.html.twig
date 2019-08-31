@@ -1,0 +1,53 @@
+{% extends 'partials/base-translators.html.twig' %}
+
+{% block header %}{% endblock header %}
+
+{% block content %}
+<div class="form-items">
+    <h3>Select the language and page to translate.</h3>
+    <p>If you have any questions regarding translation, please contact an admin.</p>
+    {% include 'partials/messages.html.twig' %}
+
+    <label>
+        Pick the language to translate
+        <select class="custom-select mt-1" data-lang>
+            {% for lang in grav.user.translator %}
+                <option value="{{ lang }}">{{ grav.language.getLanguageCode(lang, 'name') }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Pick the page to translate
+        <select class="custom-select mt-1" data-page>
+            {% for p in page.find('/products').children %}
+                <option value="{{ p.folder }}">{{ p.title }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <div class="form-button full-width">
+        <button class="button primary" data-continue>Continue</button>
+    </div>
+</div>
+<div class="form-sent">
+    <div class="tick-holder">
+        <div class="tick-icon"></div>
+    </div>
+    <h3>Final Step</h3>
+    <p>Please pick which subpage to translate.</p>
+
+    <label>
+        <select class="custom-select mt-1" data-subpage>
+            <option value="product">Product</option>
+        </select>
+    </label>
+    <div>
+        <a class="button primary" href="/translate" data-translate>Translate</a>
+        <a class="btn btn-link" href="#" data-back>back</a>
+    </div>
+    <div class="info-holder">
+        <span>Unsure what to pick?</span> <a href="#">We can help</a>.
+    </div>
+</div>
+{% endblock content %}
