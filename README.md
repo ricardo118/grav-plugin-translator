@@ -152,7 +152,7 @@ slack:
 
 **NOTE: Replace `yourwebsite.com` with the domain you are using the plugin on, and replace the `/translator` **ONLY** if you have modified the default `base_route` variable**
 
-![Screenshot](images/webhook.png)
+![Screenshot](images/interactive.png)
 
 Now you can enable Slack notifications in your plugin for approving and denying translator submitted pages.
 
