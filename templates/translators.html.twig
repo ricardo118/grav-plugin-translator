@@ -1,5 +1,21 @@
 {% extends 'partials/base-translators.html.twig' %}
 
+{% macro page_options(globals, pages_list) %}
+    {% set field = globals.field %}
+    {% set value = globals.value %}
+    {% if field.options and depth == 0 %}
+        {% for key, value in field.options %}
+            <option value="{{ key|e('html_attr') }}">{{ value|t }}</option>
+        {% endfor %}
+    {% endif %}
+
+    {% for page_route, option in pages_list %}
+        <option {% if page_route == value or (field.multiple and page_route in value) %}selected="selected"{% endif %} value="{{ page_route }}">{{ option|raw }}</option>
+    {% endfor %}
+{% endmacro %}
+
+{% import _self as macro %}
+
 {% block header %}{% endblock header %}
 
 {% block content %}
@@ -11,43 +27,28 @@
     <label>
         Pick the language to translate
         <select class="custom-select mt-1" data-lang>
-            {% for lang in grav.user.translator %}
-                <option value="{{ lang }}">{{ grav.language.getLanguageCode(lang, 'name') }}</option>
-            {% endfor %}
+            {% if 'super' in grav.user.translator %}
+                {% for lang in grav.language.languages if lang is not same as(grav.language.default) %}
+                    <option value="{{ lang }}">{{ grav.language.getLanguageCode(lang, 'name') }}</option>
+                {% endfor %}
+            {% else %}
+                {% for lang in grav.user.translator %}
+                    <option value="{{ lang }}">{{ grav.language.getLanguageCode(lang, 'name') }}</option>
+                {% endfor %}
+            {% endif %}
         </select>
     </label>
 
+    {% set page_list = grav.pages.getList(null, 0, true, true, false, false, true, false) %}
     <label>
         Pick the page to translate
-        <select class="custom-select mt-1" data-page>
-            {% for p in page.find('/products').children %}
-                <option value="{{ p.folder }}">{{ p.title }}</option>
-            {% endfor %}
+        <select class="custom-select mt-1" data-page-select>
+            {{ macro.page_options(_context, page_list) }}
         </select>
     </label>
 
     <div class="form-button full-width">
-        <button class="button primary" data-continue>Continue</button>
-    </div>
-</div>
-<div class="form-sent">
-    <div class="tick-holder">
-        <div class="tick-icon"></div>
-    </div>
-    <h3>Final Step</h3>
-    <p>Please pick which subpage to translate.</p>
-
-    <label>
-        <select class="custom-select mt-1" data-subpage>
-            <option value="product">Product</option>
-        </select>
-    </label>
-    <div>
-        <a class="button primary" href="/translate" data-translate>Translate</a>
-        <a class="btn btn-link" href="#" data-back>back</a>
-    </div>
-    <div class="info-holder">
-        <span>Unsure what to pick?</span> <a href="#">We can help</a>.
+        <a class="button primary" href="{{ url(uri.path ~ '/edit')}}" data-translate>Translate</a>
     </div>
 </div>
 {% endblock content %}

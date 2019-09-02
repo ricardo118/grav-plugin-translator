@@ -1,30 +1,48 @@
 <?php
-namespace Grav\Plugin\Mde;
+namespace Grav\Plugin\Translator;
 
 use Grav\Common\Grav;
-use Grav\Common\Page\Page;
+use Grav\Common\Language\LanguageCodes;
+use Grav\Common\Uri;
+use Grav\Plugin\TranslatorPlugin;
+use GuzzleHttp\Client;
 use RuntimeException;
 
 class Api
 {
-    /* @var Grav $grav */
+    /**
+     *  @var Grav
+     */
     protected $grav;
+
+    /**
+     *  @var Controller
+     */
+    protected $controller;
+
+    /**
+     * @var array
+     */
+    protected $configs;
+    protected $post;
+
+    /**
+     * @var Uri
+     */
+    protected $uri;
 
     /**
      * @var string
      */
-    protected $redirect;
-
-    /**
-     * @var int
-     */
-    protected $redirectCode;
-
-    protected $uri;
-    protected $post;
     protected $path;
 
-    const API = '/v1/mde/';
+    const SLACKENDPOINT = '/slackendpoint';
+    const EMAILENDPOINT = '/emailendpoint';
+
+    public function __construct($configs)
+    {
+        $this->configs = $configs;
+    }
 
     public function init()
     {
@@ -32,24 +50,20 @@ class Api
         $this->uri = $this->grav['uri'];
         $this->post = $this->uri->post();
         $this->path = $this->uri->path();
+        $this->controller = new Controller();
+        $this->controller->initialize('',$this->post,'');
     }
 
     /**
-     * Performs an action.
+     * Performs an action by calling a method.
      * @throws RuntimeException
      */
     public function execute()
     {
         $messages = $this->grav['messages'];
 
-        // Set redirect if available.
-        if (isset($this->post['_redirect'])) {
-            $redirect = $this->post['_redirect'];
-            unset($this->post['_redirect']);
-        }
-
         $success = false;
-        $method = str_replace(self::API, '', $this->path);
+        $method = str_replace(TranslatorPlugin::$base_route.TranslatorPlugin::API.DS, '', $this->path);
 
         if (!method_exists($this, $method)) {
             throw new RuntimeException($method, 404);
@@ -59,51 +73,114 @@ class Api
             $success = call_user_func([$this, $method]);
         } catch (RuntimeException $e) {
             $messages->add($e->getMessage(), 'error');
-            $this->grav['log']->error('plugin.mde: '. $e->getMessage());
-        }
-
-        if (!$this->redirect && isset($redirect)) {
-            $this->setRedirect($redirect, 303);
+            $this->grav['log']->error('plugin.translator: '. $e->getMessage());
         }
 
         return $success;
     }
 
     /**
-     * Redirects an action
-     */
-    public function redirect()
-    {
-        if ($this->redirect) {
-            $this->grav->redirect($this->redirect, $this->redirectCode);
-        }
-    }
-
-    /**
-     * Set redirect.
+     * Json encodes and terminates execution. Used for ajax responses.
      *
-     * @param     $path
+     * @param $result
      * @param int $code
+     * @param bool $replace
      */
-    public function setRedirect($path, $code = 303)
+    public function jsonResponse($result, $code = 200, $replace = true)
     {
-        $this->redirect = $path;
-        $this->redirectCode = $code;
-    }
-
-    public function getchildren()
-    {
-        $route = $this->post['route'];
-        $pages = $this->grav['pages'];
-        $result = [];
-
-        /** @var Page $child */
-        foreach ($pages->find($route)->children() as $child) {
-            $result[$child->route()] = ucfirst($child->template()) . ' (' . $child->slug() . ')';
-        }
-
-        header('Content-Type: application/json');
+        header('Content-Type: application/json', $replace, $code);
         echo json_encode($result);
         exit();
+    }
+
+    public function slackendpoint()
+    {
+        $payload = $_POST['payload'];
+        $data = json_decode($payload);
+
+        require_once dirname(__DIR__, 1) . '/classes/Slack.php';
+        $slack_configs = $this->grav['config']->get('plugins.translator')['slack'];
+        $slack = new Slack($slack_configs);
+        $slack->init();
+
+        $name = '@'.$data->user->name;
+        $action = $data->actions{0}->action_id;
+
+        $value = $data->actions{0}->value ? json_decode($data->actions{0}->value, true) : null;
+        $lang = $value['data']['lang'] ?? null;
+        $page = $value['data']['page'] ?? null;
+
+        $blocks = (array) $data->message->blocks;
+        $email = str_replace('mailto://', '', $blocks[2]->elements{2}->url);
+        $section = Slack::addSection("*Processing...*");
+
+        $blocks[2] = $section;
+
+        $result = [
+            "replace_original" => true,
+            "text" => 'test',
+            "blocks" => $blocks
+        ];
+
+        // we must respond to slack first to avoid warning icon (limit 3 sec response)
+        $guzzle = new Client();
+        $guzzle->post($data->response_url, ['body' => json_encode($result)]);
+
+        switch ($action)
+        {
+            case 'approve_button':
+                $this->controller->approveTranslation($lang, $page, $name, $email);
+                $section = Slack::addSection("*Translation approved by {$name}*");
+                break;
+
+            case 'deny_button':
+                $this->controller->denyTranslation($lang, $page, $name, $email);
+                $section = Slack::addSection("*Translation denied by {$name}*");
+                break;
+        }
+        $blocks[2] = $section;
+
+        $result = [
+            "replace_original" => true,
+            "text" => 'test',
+            "blocks" => $blocks
+        ];
+
+        $guzzle = new Client();
+        $guzzle->post($data->response_url, ['body' => json_encode($result)]);
+        $this->jsonResponse($result);
+    }
+
+    public function emailEndpoint()
+    {
+        $params = $this->uri->query(null, true);
+        $action = $params['action'];
+
+        $lang     = LanguageCodes::getName($params['lang']);
+        $code     = $params['lang'];
+        $name     = $params['name'];
+        $page     = $params['page'];
+        $email    = $params['email'];
+        $preview  = $params['preview'];
+
+        switch($action)
+        {
+            case 'approve_button':
+                $result = $this->controller->approveTranslation($code, $page, $name, $email);
+
+                break;
+
+            case 'deny_button':
+                $result = $this->controller->denyTranslation($lang, $preview, $name, $email);
+                break;
+            default:
+                $result = [
+                    'type' => 'Error',
+                    'message' => 'Action failed, please try again.'
+                ];
+                break;
+        }
+
+        $this->jsonResponse($result);
     }
 }

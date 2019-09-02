@@ -1,0 +1,20 @@
+{% set status_mapping = {'info':'success', 'error': 'danger', 'warning': 'warning'} %}
+
+{% if grav.messages.all %}
+    <div id="messages" class="{{ classes }}">
+        {% for message in grav.messages.fetch %}
+
+            {% set scope = message.scope|e %}
+            {% set color = status_mapping[scope] %}
+
+            <div class="alert alert-{{ color }} with-icon" role="alert">
+                {{ message.message|raw }}
+            </div>
+
+        {% endfor %}
+    </div>
+{% else %}
+    <div id="messages" class="{{ classes }} hide">
+        <div class="alert with-icon" role="alert"></div>
+    </div>
+{% endif %}

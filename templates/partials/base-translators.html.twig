@@ -1,3 +1,6 @@
+{% set translator_base = config.plugins.translator.base_route %}
+{% set color = config.plugins.translator.style.color %}
+{% set logo = config.plugins.translator.style.logo|first.path %}
 <!DOCTYPE html>
 <html lang="{{ grav.language.getActive ?: grav.config.site.default_lang }}">
 <head>
@@ -9,23 +12,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         {% include 'partials/metadata.html.twig' %}
 
-        <link rel="icon" type="image/png" href="{{ url('theme://images/logo.png') }}" />
+        <link rel="icon" type="image/png" href="{{ url(logo) }}" />
         <link rel="canonical" href="{{ page.url(true, true) }}" />
     {% endblock head %}
 
+    {% set css %}
+        :root {
+            --main-color: {{ color }};
+        }
+    {% endset %}
+
     {% block stylesheets %}
-        {% do assets.addCss('plugin://mde/css/bootstrap.min.css') %}
-        {% do assets.addCss('plugin://mde/css/fontawesome-all.min.css') %}
-        {% do assets.addCss('plugin://mde/css/iofrm-style.css') %}
-        {% do assets.addCss('plugin://mde/css/iofrm-theme7.css') %}
+        {% do assets.addCss('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css') %}
+        {% do assets.addInlineCss(css) %}
+        {% do assets.addCss('plugin://translator/css/translator.css') %}
     {% endblock %}
 
     {% block javascripts %}
-        {% do assets.addJs('jquery', 100) %}
-        {% do assets.addJs('plugin://mde/js/jquery.splendid.textchange.js', {group: 'bottom'}) %}
-        {% do assets.addJs('plugin://mde/js/popper.min.js', {group: 'bottom'}) %}
-        {% do assets.addJs('plugin://mde/js/bootstrap.min.js', {group: 'bottom'}) %}
-        {% do assets.addJs('plugin://mde/js/main.js', {group: 'bottom'}) %}
+        {% do assets.addJs('plugin://translator/js/jquery.min.js', 100) %}
+        {% do assets.addJs('plugin://translator/js/jquery.splendid.textchange.js', {group: 'bottom'}) %}
+        {% do assets.addJs('plugin://translator/js/translator.js', {group: 'bottom'}) %}
     {% endblock %}
 
     {% block assets deferred %}
@@ -59,7 +65,7 @@
         <div class="website-logo {{ logo_classes }}">
             <a href="/translators">
                 <div class="logo">
-                    <img class="logo-size" src="{{ url('plugin://mde/images/megadeals_logo.png') }}" alt="">
+                    <img class="logo-size" src="{{ url(logo) }}" alt="">
                 </div>
             </a>
         </div>
@@ -74,7 +80,7 @@
                 <div class="bg"></div>
                 <div class="info-holder">
                     {% block info %}
-                        <img src="{{ url('plugin://mde/images/graphic3.svg') }}" alt="">
+                        <img src="{{ url('plugin://translator/images/graphic3.svg') }}" alt="">
                         <h1>TRANSLATORS AREA</h1>
                     {% endblock info %}
                 </div>

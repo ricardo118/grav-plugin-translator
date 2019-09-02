@@ -1,0 +1,24 @@
+enabled: true
+base_route: '/translator'                   # The plugin will operate under this route for all functionality.
+fields:                                     # Which fields the plugin allows for translation, every other field is ignored
+  - text
+  - textarea
+  - editor
+  - ckeditor
+  - markdown
+slack:
+  enabled: false                            # Enable slack notifications
+  webhook: ''                               # The webhook URL - generate your own via slack developer app
+  channel: '#general'                       # The channel in which to send the message
+style:
+  color: '#39CCCC'                          # Teal
+#  color: '#ff6000'                         # Sunny Orange
+#  color: '#984B43'                         # Rusty red
+#  color: '#94618e'                         # Grape
+#  color: '#4484CE'                         # Sky Blue
+  logo:
+    user/plugins/translator/images/grav-logo.png:
+      name: grav-logo.png
+      type: image/png
+      size: 14215
+      path: user/plugins/translator/images/grav-logo.png

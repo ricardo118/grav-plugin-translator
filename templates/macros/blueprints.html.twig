@@ -1,22 +1,16 @@
-{% macro fields_loop(fields, data, untranslatable, readonly) %}
+{% macro fields_loop(fields, data, types_to_translate, readonly) %}
     {% import _self as macros %}
 
     {% for field in fields %}
-        {% if field.type and field.translator|defined(true) %}
-            {% if field.type not in untranslatable %}
+        {% if field.type %}
+
+            {% if field.translator is not same as(false) and (field.type in types_to_translate or field.translator is same as(true)) %}
 
                 {% set field = field|merge({'readonly': readonly})  %}
                 {% set value = field.name ? (form.value(field.name) ?? data.value(field.name)) : data.toArray %}
-                {% if field.type is same as ('wysiwyg')%}
-                    {% set field = field|merge({'type': 'textarea'})  %}
-                {% endif %}
 
                 {% if field.fields %}
-                    {% if field.type is same as('list') %}
-                        {% include "forms/fields/list/list.html.twig" %}
-                    {% else %}
-                        {{ macros.fields_loop(field.fields, data, untranslatable, readonly) }}
-                    {% endif %}
+                    {{ macros.fields_loop(field.fields, data, types_to_translate, readonly) }}
                 {% else %}
                     <div class="block block-{{ field.type }}">
                         {% include ["forms/fields/#{field.type}/#{field.type}.html.twig", 'forms/fields/text/text.html.twig'] %}
@@ -24,6 +18,7 @@
                 {% endif %}
 
             {% endif %}
+
         {% endif %}
     {% endfor %}
 {% endmacro %}
