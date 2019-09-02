@@ -1,7 +1,7 @@
 name: Translator
-version: 1.0.0
+version: 1.0.1
 description: A grav CMS plugin for easily allowing translators to translate your website without needing admin access.
-icon: plug
+icon: globe
 author:
   name: ricardo
   email: ricardo@urbansquid.london
