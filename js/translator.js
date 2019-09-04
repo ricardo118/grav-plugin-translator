@@ -3,13 +3,13 @@ let dirtyForm = false;
 let changes = ['template'];
 let oldVal = "";
 
-$('input').on("textchange", function() {
+$('#translated input').on("textchange", function() {
     const name = this.name;
     addToChanges(name);
     dirtyForm = true;
 });
 
-$('textarea').on("change keyup paste", function() {
+$('#translated textarea').on("change keyup paste", function() {
     const currentVal = $(this).val();
     const name = this.name;
 
