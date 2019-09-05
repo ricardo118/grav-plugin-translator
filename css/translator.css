@@ -339,6 +339,14 @@ h1 {
     /*width: 100%;*/
 }
 
+.form-content label span.tooltip {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 20px;
+    position: relative;
+    opacity: 1;
+}
+
 .form-content .page-links {
     margin-bottom: 34px;
 }
@@ -2090,6 +2098,13 @@ a[data-change-language] {
     content: url(../images/clipboard.svg);
     vertical-align: middle;
     margin-left: 10px;
+}
+
+.translator.external-link:after {
+    content: url(../images/external.svg);
+    vertical-align: sub;
+    margin-left: 10px;
+    width: 10px;
 }
 
 #blueprints .form-field .form-label {
