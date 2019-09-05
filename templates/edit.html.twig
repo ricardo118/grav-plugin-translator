@@ -10,8 +10,10 @@
         <div class="bg"></div>
         <div class="info-holder">
             <div class="form-content">
-                <span>Translating from:</span>
-                <a href="{{ url(default.route) }}" target="_blank" alt="Preview Original!"><h3 class="mb-0">{{ grav.language.getLanguageCode(grav.language.getActive(), 'name') }} <i class="translator external-link"></i></h3></a>
+                <span class="d-block">Translating from:</span>
+                <a href="{{ url(default.route) }}" target="_blank" alt="Preview Original!" class="d-inline">
+                    <h3 class="mb-0">{{ grav.language.getLanguageCode(grav.language.getActive(), 'name') }} <i class="translator external-link"></i></h3>
+                </a>
                 <a href="{{ url(translator_base) }}">Change Page</a>
                 <hr>
                 {% include 'partials/blueprints.html.twig' with { blueprints: default.blueprints, data: default, readonly: true} %}
@@ -21,7 +23,7 @@
     <div class="col-12 col-sm-6">
         <div class="form-content">
             <div>
-                <span>Translating to:</span>
+                <span class="d-block">Translating to:</span>
                 <select class="custom-select mt-1" data-language>
                     {% if 'super' in grav.user.translator %}
                         {% for lang in grav.language.languages if lang is not same as(grav.language.default) %}
