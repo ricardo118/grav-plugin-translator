@@ -1,4 +1,8 @@
 {% extends 'partials/base-translators.html.twig' %}
+{% if config.plugins.ckeditor5.enabled %}
+    {% do assets.addCss('plugins://ckeditor5/admin/custom.css') %}
+    {% do assets.addJs('plugins://ckeditor5/vendor/build/ckeditor.js') %}
+{% endif %}
 
 {% set title = 'Translating to ' ~ grav.language.getLanguageCode(translatableLang, 'name') %}
 {% set logo_classes = 'tight' %}
