@@ -6,7 +6,6 @@ let oldVal = "";
 $('#translated input').on("textchange", function() {
     const name = this.name;
     addToChanges(name);
-    dirtyForm = true;
 });
 
 $('#translated textarea').on("change keyup paste", function() {
@@ -19,13 +18,13 @@ $('#translated textarea').on("change keyup paste", function() {
     oldVal = currentVal;
 
     addToChanges(name);
-    dirtyForm = true;
 
 });
 
 function addToChanges(name) {
     if(changes.indexOf(name) === -1) {
         changes.push(name);
+        dirtyForm = true;
     }
 }
 
