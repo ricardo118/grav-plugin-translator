@@ -3,12 +3,15 @@ let dirtyForm = false;
 let changes = ['template'];
 let oldVal = "";
 
-$('#translated input').on("textchange", function() {
+const origin_form = $('#blueprints');
+const translate_form = $('#translated');
+
+translate_form.find('input').on("textchange", function() {
     const name = this.name;
     addToChanges(name);
 });
 
-$('#translated textarea').on("change keyup paste", function() {
+translate_form.find('textarea').on("change keyup paste", function() {
     const currentVal = $(this).val();
     const name = this.name;
 
@@ -57,7 +60,7 @@ window.addEventListener('beforeunload', function (e) {
     }
 });
 
-$('#translated').submit(function(event) {
+translate_form.submit(function(event) {
     const data = $(this).serializeArray();
     const result = data.filter(f => changes.includes(f.name));
     const url = $('[data-translator-save]').attr('href');
@@ -108,7 +111,7 @@ $('[data-translate]').on('click',function(e) {
 });
 
 // Copy to Clipboard
-$('#blueprints .form-label').on('click',function(e) {
+origin_form.find('.form-label').on('click',function(e) {
     const formField = $(this).closest('.form-field');
     const input = formField.find('input');
     const textarea = formField.find('textarea');
@@ -168,3 +171,41 @@ $('[data-language]').on('change', function() {
 
     link.attr('href', url).text(`${linkText} ${text}`).css('opacity', '1')
 });
+
+
+$( document ).ready(function() {
+
+    $('[data-collection-holder]').each(function() {
+        hideEmptyList($(this));
+    });
+
+    origin_form.find('input, textarea').each(function() {
+        hideEmptyFields($(this));
+    });
+
+    $('.section-wrapper').each(function() {
+        hideEmptyWrappers($(this));
+    });
+});
+
+function hideEmptyWrappers(element) {
+    if (element.find('.block').length === 0) {
+        element.remove();
+    }
+}
+
+function hideEmptyFields(element) {
+
+    if (!element.val()) {
+        const field_name = element.attr('name');
+        translate_form.find(`[name="${field_name}"]`).closest('.block').remove();
+        element.closest('.block').remove();
+    }
+}
+
+function hideEmptyList(element) {
+
+    if (element.children().length === 0) {
+        element.closest('.form-field').addClass('d-none');
+    }
+}

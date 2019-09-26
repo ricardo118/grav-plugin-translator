@@ -2080,8 +2080,10 @@ form.login-form {
 }
 
 .form-content .collection-collapsed {
-    border-bottom: 2px solid black;
     margin-top: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    border-left: 1px solid rgba(0,0,0,0.4);
+    padding-left: 1rem;
 }
 
 .form-content .collection-collapsed .collection-collapsed {
