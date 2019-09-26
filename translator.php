@@ -332,8 +332,7 @@ class TranslatorPlugin extends Plugin
         if ($file) {
             $wip_page = new Page;
             $wip_page->init(new \SplFileInfo($file), $extension);
-            $wip_page->header();
-            dump($this->mergeHeaders($wip_page, [$live_page, $this->getPageInLanguage($live_page, $this->default_lang)]));
+            $wip_page->header($this->mergeHeaders($wip_page, [$live_page]));
 
             if (empty($wip_page->rawMarkdown())) {
                 $wip_page->content($live_page->rawMarkdown());
