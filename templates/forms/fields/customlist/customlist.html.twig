@@ -50,12 +50,16 @@
                                     %}
                                 {% elseif child.type %}
                                     {% set originalValue = childValue %}
-                                    {%
-                                        include [
-                                            "forms/fields/#{child.type}/#{child.type}.html.twig",
-                                            'forms/fields/text/text.html.twig'
-                                        ] with { field: child, value: childValue }
-                                    %}
+                                    {% if child.type is same as('list') %}
+                                        {% include 'forms/fields/customlist/customlist.html.twig' with { field: child, value: childValue } %}
+                                    {% else %}
+                                        {%
+                                            include [
+                                                "forms/fields/#{child.type}/#{child.type}.html.twig",
+                                                'forms/fields/text/text.html.twig'
+                                            ] with { field: child, value: childValue }
+                                        %}
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}

@@ -435,6 +435,10 @@ ul {
     margin-bottom: 14px;
 }
 
+.form-data {
+    margin-bottom: 14px;
+}
+
 .form-content input:hover, .form-content input:focus, .form-content .dropdown-toggle.btn-default:hover, .form-content .dropdown-toggle.btn-default:focus {
     border: 0;
     background-color: #ebeff8;
@@ -2079,15 +2083,16 @@ form.login-form {
     margin-bottom: 0;
 }
 
-.form-content .collection-collapsed {
+.form-content [data-collection-item] {
     margin-top: 20px;
     border-bottom: 1px solid rgba(0,0,0,0.4);
     border-left: 1px solid rgba(0,0,0,0.4);
     padding-left: 1rem;
+    margin-bottom: 1rem;
 }
 
 .form-content .collection-collapsed .collection-collapsed {
-    border-bottom: none;
+    /*border-bottom: none;*/
     margin-top: 0;
 }
 

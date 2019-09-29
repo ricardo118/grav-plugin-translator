@@ -189,7 +189,7 @@ $( document ).ready(function() {
 });
 
 function hideEmptyWrappers(element) {
-    if (element.find('.block').length === 0) {
+    if (element.find('.block, .form-field').length === 0) {
         element.remove();
     }
 }
