@@ -164,7 +164,7 @@ $('[data-language]').on('change', function() {
     const lang = $(this).val();
     let text = $('[data-language] option:selected').text();
     const link = $('[data-change-language]');
-    const linkText = link.text();
+    const linkText = 'Change Language to';
     let url = link.attr('href');
 
     url = `${url}/lang:${lang}`;
