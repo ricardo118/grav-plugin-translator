@@ -173,20 +173,20 @@ $('[data-language]').on('change', function() {
 });
 
 
-$( document ).ready(function() {
-
-    $('[data-collection-holder]').each(function() {
-        hideEmptyList($(this));
-    });
-
-    origin_form.find('input, textarea').each(function() {
-        hideEmptyFields($(this));
-    });
-
-    $('.section-wrapper').each(function() {
-        hideEmptyWrappers($(this));
-    });
-});
+// $( document ).ready(function() {
+//
+//     $('[data-collection-holder]').each(function() {
+//         hideEmptyList($(this));
+//     });
+//
+//     origin_form.find('input, textarea').each(function() {
+//         hideEmptyFields($(this));
+//     });
+//
+//     $('.section-wrapper').each(function() {
+//         hideEmptyWrappers($(this));
+//     });
+// });
 
 function hideEmptyWrappers(element) {
     if (element.find('.block, .form-field').length === 0) {
