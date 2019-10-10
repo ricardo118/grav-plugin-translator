@@ -1,0 +1,73 @@
+{% extends "forms/field.html.twig" %}
+
+{% set value = (value is null ? field.default : value) %}
+{% set name = field.name %}
+
+{% block contents %}
+    <h5 class="font-weight-bold mb-0 mt-3">{{ field.label }}</h5>
+
+    <div class="form-data">
+
+        <div class="form-list-wrapper {{ field.size }}">
+
+            <ul data-collection-holder="{{ name }}">
+                {% if field.fields %}
+                {% set collapsible = field.fields|length > 1 and (field.collapsible is not defined or field.collapsible)  %}
+                {% for key, val in value %}
+                    {% set itemName = name ? name ~ '.' ~ key : key %}
+                    <li data-collection-item="{{ itemName }}" data-collection-key="{{ key }}" class="{{ collapsible and field.collapsed ? 'collection-collapsed' : '' }}">
+                        {% for childName, child in field.fields %}
+                            {% set child = child|merge({ '_list_index': itemName }) %}
+                            {%- if childName == 'value' -%}
+                                {% set childKey = '' %}
+                                {% set childValue = val %}
+                                {% set childName = itemName -%}
+                            {%- elseif childName starts with '.' -%}
+                                {% set childKey = childName|trim('.') %}
+                                {% set childValue = val[childKey] %}
+                                {% set childName = itemName ~ childName %}
+                            {% else %}
+                                {% set childKey = childName %}
+                                {% set childValue = data.value(scope ~ childName) %}
+                                {% set childName = childName|replace({'*': key}) %}
+                            {% endif %}
+                            {% set child = child|merge({ name: childName }) %}
+
+                            {% if child.translator is not same as(false) and (child.type in types_to_translate or child.translator is same as(true)) %}
+
+                                {% set child = child|merge({'readonly': readonly})  %}
+
+                                {% if child.type == 'key' %}
+                                    {%
+                                        include 'forms/fields/key/key.html.twig'
+                                        with { field: child, value: key }
+                                    %}
+                                {% elseif child.key == true and child.type != 'list' %}
+                                    {% include [
+                                            "forms/fields/#{child.type}/#{child.type}.html.twig",
+                                            'forms/fields/key/key.html.twig'
+                                        ] with { field: child, value: key }
+                                    %}
+                                {% elseif child.type %}
+                                    {% set originalValue = childValue %}
+                                    {% if child.type is same as('list') %}
+                                        {% include 'forms/fields/customlist/customlist.html.twig' with { field: child, value: childValue } %}
+                                    {% else %}
+                                        {%
+                                            include [
+                                                "forms/fields/#{child.type}/#{child.type}.html.twig",
+                                                'forms/fields/text/text.html.twig'
+                                            ] with { field: child, value: childValue }
+                                        %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+

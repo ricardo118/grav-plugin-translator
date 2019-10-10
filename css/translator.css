@@ -339,6 +339,14 @@ h1 {
     /*width: 100%;*/
 }
 
+.form-content label span.tooltip {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 20px;
+    position: relative;
+    opacity: 1;
+}
+
 .form-content .page-links {
     margin-bottom: 34px;
 }
@@ -424,6 +432,10 @@ ul {
     color: #8D8D8D;
     -webkit-transition: all 0.3s ease 0s;
     transition: all 0.3s ease 0s;
+    margin-bottom: 14px;
+}
+
+.form-data {
     margin-bottom: 14px;
 }
 
@@ -2071,13 +2083,16 @@ form.login-form {
     margin-bottom: 0;
 }
 
-.form-content .collection-collapsed {
-    border-bottom: 2px solid black;
+.form-content [data-collection-item] {
     margin-top: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    border-left: 1px solid rgba(0,0,0,0.4);
+    padding-left: 1rem;
+    margin-bottom: 1rem;
 }
 
 .form-content .collection-collapsed .collection-collapsed {
-    border-bottom: none;
+    /*border-bottom: none;*/
     margin-top: 0;
 }
 
@@ -2090,6 +2105,13 @@ a[data-change-language] {
     content: url(../images/clipboard.svg);
     vertical-align: middle;
     margin-left: 10px;
+}
+
+.translator.external-link:after {
+    content: url(../images/external.svg);
+    vertical-align: sub;
+    margin-left: 10px;
+    width: 10px;
 }
 
 #blueprints .form-field .form-label {

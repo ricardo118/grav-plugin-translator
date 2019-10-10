@@ -6,11 +6,21 @@
 
             {% if field.translator is not same as(false) and (field.type in types_to_translate or field.translator is same as(true)) %}
 
-                {% set field = field|merge({'readonly': readonly})  %}
+                {% if readonly %}
+                    {% set field = field|merge({'readonly': readonly})  %}
+                {% endif %}
+
                 {% set value = field.name ? (form.value(field.name) ?? data.value(field.name)) : data.toArray %}
 
                 {% if field.fields %}
-                    {{ macros.fields_loop(field.fields, data, types_to_translate, readonly) }}
+                    {% if field.type is not same as('list') %}
+                    <div class="section-wrapper mt-3 pl-2" style="border-left: 1px solid black;">
+                        <h5 class="font-weight-bold">{{ field.title }}</h5>
+                        {{ macros.fields_loop(field.fields, data, types_to_translate, readonly) }}
+                    </div>
+                    {% else %}
+                        {% include 'forms/fields/customlist/customlist.html.twig' %}
+                    {% endif %}
                 {% else %}
                     <div class="block block-{{ field.type }}">
                         {% include ["forms/fields/#{field.type}/#{field.type}.html.twig", 'forms/fields/text/text.html.twig'] %}

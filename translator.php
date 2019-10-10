@@ -2,6 +2,7 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Grav;
+use Grav\Common\Language\Language;
 use Grav\Common\Language\LanguageCodes;
 use Grav\Common\Page\Interfaces\PageInterface;
 use Grav\Common\Page\Page;
@@ -36,12 +37,12 @@ class TranslatorPlugin extends Plugin
     public static $base_route;
     public static $color;
 
-    const API           = '/api';
-    const EDIT          = '/edit';
-    const PREVIEW       = '/preview';
-    const SAVE_LOCATION = 'user-data://translator';
+    public const API           = '/api';
+    public const EDIT          = '/edit';
+    public const PREVIEW       = '/preview';
+    public const SAVE_LOCATION = 'user-data://translator';
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents() : array
     {
         return [
             'onPluginsInitialized' => ['onPluginsInitialized', 0]
@@ -51,7 +52,7 @@ class TranslatorPlugin extends Plugin
     /**
     * Initialize the plugin
     */
-    public function onPluginsInitialized()
+    public function onPluginsInitialized() : void
     {
         $this->uri          = $this->grav['uri'];
         $this->configs      = $this->getConfigs();
@@ -81,7 +82,7 @@ class TranslatorPlugin extends Plugin
     /**
      * Load the required Classes
      */
-    public function autoload()
+    public function autoload() : void
     {
         require_once __DIR__ . '/classes/Controller.php';
         require_once __DIR__ . '/classes/Slack.php';
@@ -145,7 +146,7 @@ class TranslatorPlugin extends Plugin
     /**
      * Initialize and execute the API
      */
-    public function apiCall()
+    public function apiCall() : void
     {
         $api = new Api($this->configs);
         $api->init();
@@ -155,7 +156,7 @@ class TranslatorPlugin extends Plugin
     /**
      * Add templates directory to twig lookup paths.
      */
-    public function onTwigTemplatePaths()
+    public function onTwigTemplatePaths() : void
     {
         $this->grav['twig']->twig_paths[] = __DIR__ . '/templates';
     }
@@ -164,7 +165,7 @@ class TranslatorPlugin extends Plugin
      * This method checks for tasks and or actions in the route and initialized the task controller
      * class which will execute the necessary tasks.
      */
-    public function taskController()
+    public function taskController() : void
     {
         $params = $this->uri->params(null, true);
         $task = $params['task'];
@@ -190,7 +191,7 @@ class TranslatorPlugin extends Plugin
      *
      * @return array
      */
-    public static function getLanguages()
+    public static function getLanguages() : array
     {
         $languages = Grav::instance()['language'];
         $options = [];
@@ -234,22 +235,21 @@ class TranslatorPlugin extends Plugin
      * @param Page $page
      * @param array $array
      *
-     * @return Page $page
+     * @return array $merged_headers
      */
-    public function mergeHeaders($page, $array = [])
+    public function mergeHeaders($page, $array = []) : array
     {
         $header = (array) $page->header();
         $merging_headers = [];
 
         foreach ($array as $p) {
             // merge all the headers into an array
-            array_push($merging_headers, (array) $p->header());
+            $merging_headers[] = (array)$p->header();
         }
         // add the final header (original page's) to the array
-        array_push($merging_headers, $header);
-        $merged_headers = array_merge(...$merging_headers);
+        $merging_headers[] = $header;
 
-        return $merged_headers;
+        return array_merge(...$merging_headers);
     }
 
     /**
@@ -262,7 +262,7 @@ class TranslatorPlugin extends Plugin
      * translatableLang => the url param {$lang}
      *
      */
-    public function addEditPageVariables()
+    public function addEditPageVariables() : void
     {
         $live_page_route = str_replace(self::$base_route . self::EDIT,'', $this->path);
 
@@ -273,6 +273,10 @@ class TranslatorPlugin extends Plugin
         /** @var Pages $pages */
         $pages= $this->grav['pages'];
         $live_page = $pages->find($live_page_route);
+
+        if (!$live_page) {
+            throw new \RuntimeException('No live page exists');
+        }
 
         $lang = $this->uri->param('lang');
         $extension = ".{$lang}.md";
@@ -306,7 +310,7 @@ class TranslatorPlugin extends Plugin
      *
      * Route: {$previewing_lang}/self::$base_route/preview/{route to a page}
      */
-    public function addPreviewPage()
+    public function addPreviewPage() : void
     {
         $base = self::$base_route;
         $route = str_replace("{$base}/preview", '', $this->path);
@@ -314,6 +318,10 @@ class TranslatorPlugin extends Plugin
         /** @var Pages $pages */
         $pages = $this->grav['pages'];
         $live_page = $pages->find($route);
+
+        if (!$live_page) {
+            throw new \RuntimeException('No live page exists');
+        }
 
         $template = $live_page->template();
         $extension = str_replace($template, '', $live_page->name());
@@ -333,7 +341,7 @@ class TranslatorPlugin extends Plugin
             $wip_page->media($live_page->media());
             $pages->addPage($wip_page, $this->path);
         } else {
-            echo 'Nothing to preview. No translated page saved yet. Please save before previewing.';
+            throw new \RuntimeException('Nothing to preview. No translated page saved yet. Please save before previewing.');
         }
     }
 
@@ -342,11 +350,11 @@ class TranslatorPlugin extends Plugin
      * Route: /self::$base_route/edit/{route to live page}
      * Params: /lang:{$lang}
      */
-    public function addEditPage()
+    public function addEditPage() : void
     {
         $user_langs = $this->grav['user']->get('translator') ?? [];
         $lang = $this->uri->param('lang');
-        $isAllowed = in_array($lang, $user_langs) || in_array('super', $user_langs);
+        $isAllowed = in_array($lang, $user_langs, false) || in_array('super', $user_langs, false);
 
         // back to translators page if the logged in user cant access this language
         if (!$lang || !$user_langs || !$isAllowed) {
@@ -361,7 +369,7 @@ class TranslatorPlugin extends Plugin
      * Dynamically add the translators page
      * Route: /self::$base_route
      */
-    public function addTranslatorsPage()
+    public function addTranslatorsPage() : void
     {
         $filename = 'translators.md';
         $this->addPage(self::$base_route, $filename);
@@ -375,14 +383,14 @@ class TranslatorPlugin extends Plugin
      * @param $template
      * @param $extension
      */
-    protected function addPage($url, $filename, $template = null, $extension = null)
+    protected function addPage($url, $filename, $template = null, $extension = null) : void
     {
         $pages = $this->grav['pages'];
         $page = $pages->dispatch($url);
 
         if (!$page) {
             $page = new Page;
-            $page->init(new \SplFileInfo(__DIR__ . "/pages/" . $filename), $extension);
+            $page->init(new \SplFileInfo(__DIR__ . '/pages/' . $filename), $extension);
             $page->slug(basename($url));
 
             if ($template) {

@@ -1,5 +1,7 @@
 # TRANSLATOR PLUGIN
 
+![Screenshot](screenshot.png)
+
 The **TRANSLATOR** Plugin is an extension for [Grav CMS](http://github.com/getgrav/grav).
 
 ## Installation

@@ -1,4 +1,8 @@
 {% extends 'partials/base-translators.html.twig' %}
+{% if config.plugins.ckeditor5.enabled %}
+    {% do assets.addCss('plugins://ckeditor5/admin/custom.css') %}
+    {% do assets.addJs('plugins://ckeditor5/vendor/build/ckeditor.js') %}
+{% endif %}
 
 {% set title = 'Translating to ' ~ grav.language.getLanguageCode(translatableLang, 'name') %}
 {% set logo_classes = 'tight' %}
@@ -10,8 +14,10 @@
         <div class="bg"></div>
         <div class="info-holder">
             <div class="form-content">
-                <span>Translating from:</span>
-                <h3 class="mb-0">{{ grav.language.getLanguageCode(grav.language.getActive(), 'name') }}</h3>
+                <span class="d-block">Translating from:</span>
+                <a href="{{ url(default.route) }}" target="_blank" alt="Preview Original!" class="d-inline">
+                    <h3 class="mb-0">{{ grav.language.getLanguageCode(grav.language.getActive(), 'name') }} <i class="translator external-link"></i></h3>
+                </a>
                 <a href="{{ url(translator_base) }}">Change Page</a>
                 <hr>
                 {% include 'partials/blueprints.html.twig' with { blueprints: default.blueprints, data: default, readonly: true} %}
@@ -21,7 +27,7 @@
     <div class="col-12 col-sm-6">
         <div class="form-content">
             <div>
-                <span>Translating to:</span>
+                <span class="d-block">Translating to:</span>
                 <select class="custom-select mt-1" data-language>
                     {% if 'super' in grav.user.translator %}
                         {% for lang in grav.language.languages if lang is not same as(grav.language.default) %}
@@ -44,7 +50,7 @@
 {% block footer %}
 <div class="footer">
     {% include 'partials/messages.html.twig' with {classes: 'translate'} %}
-    <div class="translator-actions">{{ dump(uri) }}
+    <div class="translator-actions">
         <button class="btn btn-primary" type="submit" form="translated" href="{{ url(uri.uri ~ '/task:translator.save') }}" data-translator-save="{{ default.route }}/{{ translatable.name }}">Save</button>
         <a class="btn btn-primary {{ hasSave ?: 'hide' }}" href="{{ url('/' ~ translatableLang ~ uri.path|replace({'edit':'preview'}) ) }}" target="_blank" data-preview>Preview</a>
         <a class="btn btn-primary {{ hasSave ?: 'hide' }}" href="{{ url(uri.uri ~ '/task:translator.request.approval') }}" data-approval="{{ url(default.route) }}" data-tooltip="Submit for Admin approval">Submit</a>
