@@ -23,7 +23,7 @@
     {% endset %}
 
     {% block stylesheets %}
-        {% do assets.addCss('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css') %}
+        {% do assets.addCss('plugin://translator/css/bootstrap.min.css') %}
         {% do assets.addInlineCss(css) %}
         {% do assets.addCss('plugin://translator/css/translator.css') %}
     {% endblock %}
