@@ -249,7 +249,36 @@ class TranslatorPlugin extends Plugin
         // add the final header (original page's) to the array
         $merging_headers[] = $header;
 
-        return array_merge(...$merging_headers);
+        if (!count($merging_headers) > 2) {
+            return $this->superMerge(...$merging_headers);
+        }
+
+        $result = [];
+        for ($x = 0; $x < count($merging_headers); $x++) {
+            $result = $this->superMerge($result, $merging_headers[$x]);
+        }
+
+        return $result;
+    }
+
+
+    function superMerge(...$arrays)
+    {
+        $merged = $arrays[0];
+
+        foreach ($arrays[1] as $key => & $value) {
+            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
+                $merged[$key] = $this->superMerge($merged[$key], $value);
+            } else if (is_numeric($key)) {
+                if (!in_array($value, $merged)) {
+                    $merged[] = $value;
+                }
+            } else {
+                $merged[$key] = $value;
+            }
+        }
+
+        return $merged;
     }
 
     /**
@@ -317,22 +346,24 @@ class TranslatorPlugin extends Plugin
 
         /** @var Pages $pages */
         $pages = $this->grav['pages'];
+        $language = $this->grav['language']->getActive();
         $live_page = $pages->find($route);
+        $english_page = $this->getPageInLanguage($live_page, 'en');
 
         if (!$live_page) {
             throw new \RuntimeException('No live page exists');
         }
 
         $template = $live_page->template();
-        $extension = str_replace($template, '', $live_page->name());
+        $extension = '.' . $language . '.md';
 
         // grab the WIP page header from data folder
-        $save_dir = self::SAVE_LOCATION . $route . DS . $live_page->name();
+        $save_dir = self::SAVE_LOCATION . $route . DS . $template . $extension;
         $file = $this->grav['locator']->findResource($save_dir);
         if ($file) {
             $wip_page = new Page;
             $wip_page->init(new \SplFileInfo($file), $extension);
-            $wip_page->header($this->mergeHeaders($wip_page, [$live_page]));
+            $wip_page->header($this->mergeHeaders($wip_page, [$english_page, $live_page]));
 
             if (empty($wip_page->rawMarkdown())) {
                 $wip_page->content($live_page->rawMarkdown());
