@@ -120,7 +120,8 @@ class TranslatorPlugin extends Plugin
 
             case self::PREVIEW:
                 $this->enable([
-                    'onPagesInitialized' => ['addPreviewPage', 0]
+                    'onPagesInitialized' => ['addPreviewPage', 0],
+                    'onTwigSiteVariables'=> ['onPreviewPageVariables', 0],
                 ]);
                 break;
 
@@ -159,6 +160,14 @@ class TranslatorPlugin extends Plugin
     public function onTwigTemplatePaths() : void
     {
         $this->grav['twig']->twig_paths[] = __DIR__ . '/templates';
+    }
+
+    /**
+     * Add templates directory to twig lookup paths.
+     */
+    public function onPreviewPageVariables() : void
+    {
+        $this->grav['twig']->twig_vars['isPreview'] = true;
     }
 
     /**
@@ -370,6 +379,7 @@ class TranslatorPlugin extends Plugin
             }
 
             $wip_page->media($live_page->media());
+            $wip_page->parent($live_page->parent());
             $pages->addPage($wip_page, $this->path);
         } else {
             throw new \RuntimeException('Nothing to preview. No translated page saved yet. Please save before previewing.');
