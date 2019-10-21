@@ -402,6 +402,11 @@ class TranslatorPlugin extends Plugin
             $this->grav->redirect(self::$base_route);
         }
 
+        // Force a default language as `from` - used if auto browser lang enabled
+        if (isset($this->configs['default_lang'])) {
+            $this->grav['language']->setActive($this->configs['default_lang']);
+        }
+
         $filename = 'edit.md';
         $this->addPage($this->path, $filename);
     }
