@@ -150,7 +150,8 @@ class Controller
             if ($file) {
                 $page = new Page();
                 $page->init(new \SplFileInfo($save_path), $extension);
-                $page->header((object)$header);
+                $merged_header = array_replace_recursive((array)$page->header(), $header);
+                $page->header((object)$merged_header);
                 $page->frontmatter(Yaml::dump((array)$page->header(), 20));
                 $page->content($content);
                 $page->save();
