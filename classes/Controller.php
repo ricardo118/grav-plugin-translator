@@ -442,4 +442,12 @@ class Controller
 
         return $result;
     }
+
+    /**
+     * Keep alive
+     */
+    protected function translatorKeepAlive()
+    {
+        exit();
+    }
 }

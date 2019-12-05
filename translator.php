@@ -130,6 +130,7 @@ class TranslatorPlugin extends Plugin
                     'onPagesInitialized'           => ['addEditPage', 0],
                     'onTwigSiteVariables'          => ['addEditPageVariables', 0],
                     'onTask.translator.save'             => ['taskController', 0],
+                    'onTask.translator.keep.alive'       => ['taskController', 0],
                     'onTask.translator.request.approval' => ['taskController', 0]
                 ]);
                 break;

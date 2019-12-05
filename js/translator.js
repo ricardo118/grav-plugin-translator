@@ -209,3 +209,28 @@ function hideEmptyList(element) {
         element.closest('.form-field').addClass('d-none');
     }
 }
+
+$(function() {
+    const tenMinuteInterval = 600000;
+    // const storiesInterval = 10 * 1000;
+
+    const keepAlive = function() {
+        console.log('Sending Keep Alive request...');
+        $.ajax({
+            type: "POST",
+            url: "/translator/edit/task:translator.keep.alive",
+        }).done(function(msg) {
+            console.log('success');
+        }).fail(function() {
+            console.log('error');
+        }).always(function() {
+            // Schedule the next request after this one completes,
+            // even after error
+            console.log('Waiting ' + (tenMinuteInterval / 1000) + ' seconds');
+            setTimeout(keepAlive, tenMinuteInterval);
+        });
+    };
+
+    // Fetch news immediately, then every 10 seconds AFTER previous request finishes
+    keepAlive();
+});
