@@ -7,6 +7,7 @@ use Grav\Common\Uri;
 use Grav\Plugin\TranslatorPlugin;
 use GuzzleHttp\Client;
 use RuntimeException;
+use Google\Cloud\Translate\V2\TranslateClient;
 
 class Api
 {
@@ -179,6 +180,31 @@ class Api
                     'message' => 'Action failed, please try again.'
                 ];
                 break;
+        }
+
+        $this->jsonResponse($result);
+    }
+
+    public function gtranslateEndpoint()
+    {
+        $translate = new TranslateClient();
+        $result = [];
+        $targetLanguage = $this->uri->param('lang');
+
+        foreach ($this->post['serializedForm'] as $item)
+        {
+            if (!empty($item['value']))
+            {
+                $api = $translate->translate($item['value'], [
+                    'target' => $targetLanguage,
+                    'key'    => 'AIzaSyAHIf65pPmdRVz5FTW4Z-RVDcK5qOvd2dA'
+                ]);
+
+                $result[] = [
+                    'name'  => $item['name'],
+                    'value' => htmlspecialchars_decode($api['text'], ENT_QUOTES)
+                ];
+            }
         }
 
         $this->jsonResponse($result);

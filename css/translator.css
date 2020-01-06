@@ -2128,6 +2128,31 @@ a[data-change-language] {
     padding: 0 10px;
     transition: all 0.4s ease-in-out;
 }
+
+#overlay {
+    top:0;
+    position: absolute;
+    z-index:99999;
+    background: #0006;
+    cursor:no-drop;
+    height:100vh;
+    width:100vw;
+    display:none;
+}
+
+#overlay .overlay-wrapper {
+    position: relative;
+    top: 50%;
+    color: white;
+    text-align: center;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+#overlay .overlay-wrapper h1 {
+    padding: 20px;
+    background: #0006;
+}
 /* -----------------------------------
     2 - Responsive Styles
 ------------------------------------*/

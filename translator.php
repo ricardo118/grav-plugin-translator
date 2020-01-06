@@ -84,6 +84,7 @@ class TranslatorPlugin extends Plugin
      */
     public function autoload() : void
     {
+        require_once __DIR__ . '/vendor/autoload.php';
         require_once __DIR__ . '/classes/Controller.php';
         require_once __DIR__ . '/classes/Slack.php';
         require_once __DIR__ . '/classes/Api.php';
@@ -319,7 +320,7 @@ class TranslatorPlugin extends Plugin
 
         $lang = $this->uri->param('lang');
         $extension = ".{$lang}.md";
-        $translatablePage = $this->getPageInLanguage($live_page, $lang) ?? $live_page;
+        $translatablePage = $this->getPageInLanguage($live_page, $lang) ?? clone($live_page);
 
         // check if a Saved Page already exists and merge the headers.
         $save = $locator->findResource(self::SAVE_LOCATION . $live_page->route() . DS . $live_page->template() . $extension);

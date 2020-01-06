@@ -234,3 +234,37 @@ $(function() {
     // Fetch news immediately, then every 10 seconds AFTER previous request finishes
     keepAlive();
 });
+
+// Google Translate button
+$('[data-g-translate]').on('click',function(e) {
+    e.preventDefault();
+    const target = $(e.currentTarget);
+    const url = $(this).attr('href');
+    const serializedForm = $('#blueprints').serializeArray();
+
+    $('#overlay').fadeIn();
+    $.ajax({
+        type: 'POST',
+        url: url,
+        // dataType: 'json',
+        data: {serializedForm},
+        success: function (data) {
+            updateTranslations(data);
+        },
+    });
+});
+
+function updateTranslations(data) {
+    const form = $('#translated');
+
+    for(let i = 0; i < data.length; i++) {
+        form.find('[name="' + data[i].name + '"]').val(data[i].value);
+        addToChanges(data[i].name);
+    }
+
+    form.submit();
+    dirtyForm = false;
+    setTimeout(function(){ window.location.reload(true); }, 2000);
+
+    $('#overlay').fadeOut();
+}
