@@ -209,3 +209,62 @@ function hideEmptyList(element) {
         element.closest('.form-field').addClass('d-none');
     }
 }
+
+$(function() {
+    const tenMinuteInterval = 600000;
+    // const storiesInterval = 10 * 1000;
+
+    const keepAlive = function() {
+        console.log('Sending Keep Alive request...');
+        $.ajax({
+            type: "POST",
+            url: "/translator/edit/task:translator.keep.alive",
+        }).done(function(msg) {
+            console.log('success');
+        }).fail(function() {
+            console.log('error');
+        }).always(function() {
+            // Schedule the next request after this one completes,
+            // even after error
+            console.log('Waiting ' + (tenMinuteInterval / 1000) + ' seconds');
+            setTimeout(keepAlive, tenMinuteInterval);
+        });
+    };
+
+    // Fetch news immediately, then every 10 seconds AFTER previous request finishes
+    keepAlive();
+});
+
+// Google Translate button
+$('[data-g-translate]').on('click',function(e) {
+    e.preventDefault();
+    const target = $(e.currentTarget);
+    const url = $(this).attr('href');
+    const serializedForm = $('#blueprints').serializeArray();
+
+    $('#overlay').fadeIn();
+    $.ajax({
+        type: 'POST',
+        url: url,
+        // dataType: 'json',
+        data: {serializedForm},
+        success: function (data) {
+            updateTranslations(data);
+        },
+    });
+});
+
+function updateTranslations(data) {
+    const form = $('#translated');
+
+    for(let i = 0; i < data.length; i++) {
+        form.find('[name="' + data[i].name + '"]').val(data[i].value);
+        addToChanges(data[i].name);
+    }
+
+    form.submit();
+    dirtyForm = false;
+    setTimeout(function(){ window.location.reload(true); }, 2000);
+
+    $('#overlay').fadeOut();
+}

@@ -51,9 +51,16 @@
 <div class="footer">
     {% include 'partials/messages.html.twig' with {classes: 'translate'} %}
     <div class="translator-actions">
+        <a class="btn btn-secondary" href="{{ url(config.plugins.translator.base_route ~ '/api/gtranslateEndpoint/lang:' ~ translatableLang) }}" data-g-translate>G Translate</a>
         <button class="btn btn-primary" type="submit" form="translated" href="{{ url(uri.uri ~ '/task:translator.save') }}" data-translator-save="{{ default.route }}/{{ translatable.name }}">Save</button>
         <a class="btn btn-primary {{ hasSave ?: 'hide' }}" href="{{ url('/' ~ translatableLang ~ uri.path|replace({'edit':'preview'}) ) }}" target="_blank" data-preview>Preview</a>
         <a class="btn btn-primary {{ hasSave ?: 'hide' }}" href="{{ url(uri.uri ~ '/task:translator.request.approval') }}" data-approval="{{ url(default.route) }}" data-tooltip="Submit for Admin approval">Submit</a>
+    </div>
+</div>
+
+<div id="overlay">
+    <div class="overlay-wrapper">
+        <h1>Please wait, translating...</h1>
     </div>
 </div>
 {% endblock %}

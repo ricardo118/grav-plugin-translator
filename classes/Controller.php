@@ -150,7 +150,8 @@ class Controller
             if ($file) {
                 $page = new Page();
                 $page->init(new \SplFileInfo($save_path), $extension);
-                $page->header((object)$header);
+                $merged_header = array_replace_recursive((array)$page->header(), $header);
+                $page->header((object)$merged_header);
                 $page->frontmatter(Yaml::dump((array)$page->header(), 20));
                 $page->content($content);
                 $page->save();
@@ -372,7 +373,6 @@ class Controller
         $page = $pages->find($route);
         $template = $page->template();
         $extension = ".{$lang}.md";
-
         // Origin(live) Page
         $path = $page->path() . DS . $template . $extension;
         if (file_exists($path)) {
@@ -397,7 +397,8 @@ class Controller
         // Merge the translated strings into the live page
         $header = (array) $origin->header();
         $translated_header = (array) $translated->header();
-        $merged_headers = array_merge($header, $translated_header);
+
+        $merged_headers = array_replace_recursive($header, $translated_header);
         $origin->header($merged_headers);
 
         if (!empty($translated->rawMarkdown())) {
@@ -440,5 +441,13 @@ class Controller
         }
 
         return $result;
+    }
+
+    /**
+     * Keep alive
+     */
+    protected function translatorKeepAlive()
+    {
+        exit();
     }
 }

@@ -1,5 +1,6 @@
 {
     "require": {
-        "alek13/slack": "^1.10"
+        "alek13/slack": "^1.10",
+        "google/cloud-translate": "^1.6"
     }
 }

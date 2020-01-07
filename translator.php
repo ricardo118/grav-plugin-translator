@@ -84,6 +84,7 @@ class TranslatorPlugin extends Plugin
      */
     public function autoload() : void
     {
+        require_once __DIR__ . '/vendor/autoload.php';
         require_once __DIR__ . '/classes/Controller.php';
         require_once __DIR__ . '/classes/Slack.php';
         require_once __DIR__ . '/classes/Api.php';
@@ -120,7 +121,8 @@ class TranslatorPlugin extends Plugin
 
             case self::PREVIEW:
                 $this->enable([
-                    'onPagesInitialized' => ['addPreviewPage', 0]
+                    'onPagesInitialized' => ['addPreviewPage', 0],
+                    'onTwigSiteVariables'=> ['onPreviewPageVariables', 0],
                 ]);
                 break;
 
@@ -129,6 +131,7 @@ class TranslatorPlugin extends Plugin
                     'onPagesInitialized'           => ['addEditPage', 0],
                     'onTwigSiteVariables'          => ['addEditPageVariables', 0],
                     'onTask.translator.save'             => ['taskController', 0],
+                    'onTask.translator.keep.alive'       => ['taskController', 0],
                     'onTask.translator.request.approval' => ['taskController', 0]
                 ]);
                 break;
@@ -159,6 +162,14 @@ class TranslatorPlugin extends Plugin
     public function onTwigTemplatePaths() : void
     {
         $this->grav['twig']->twig_paths[] = __DIR__ . '/templates';
+    }
+
+    /**
+     * Add templates directory to twig lookup paths.
+     */
+    public function onPreviewPageVariables() : void
+    {
+        $this->grav['twig']->twig_vars['isPreview'] = true;
     }
 
     /**
@@ -249,7 +260,36 @@ class TranslatorPlugin extends Plugin
         // add the final header (original page's) to the array
         $merging_headers[] = $header;
 
-        return array_merge(...$merging_headers);
+        if (!count($merging_headers) > 2) {
+            return $this->superMerge(...$merging_headers);
+        }
+
+        $result = [];
+        for ($x = 0; $x < count($merging_headers); $x++) {
+            $result = $this->superMerge($result, $merging_headers[$x]);
+        }
+
+        return $result;
+    }
+
+
+    function superMerge(...$arrays)
+    {
+        $merged = $arrays[0];
+
+        foreach ($arrays[1] as $key => & $value) {
+            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
+                $merged[$key] = $this->superMerge($merged[$key], $value);
+            } else if (is_numeric($key)) {
+                if (!in_array($value, $merged)) {
+                    $merged[] = $value;
+                }
+            } else {
+                $merged[$key] = $value;
+            }
+        }
+
+        return $merged;
     }
 
     /**
@@ -280,7 +320,7 @@ class TranslatorPlugin extends Plugin
 
         $lang = $this->uri->param('lang');
         $extension = ".{$lang}.md";
-        $translatablePage = $this->getPageInLanguage($live_page, $lang) ?? $live_page;
+        $translatablePage = $this->getPageInLanguage($live_page, $lang) ?? clone($live_page);
 
         // check if a Saved Page already exists and merge the headers.
         $save = $locator->findResource(self::SAVE_LOCATION . $live_page->route() . DS . $live_page->template() . $extension);
@@ -317,28 +357,31 @@ class TranslatorPlugin extends Plugin
 
         /** @var Pages $pages */
         $pages = $this->grav['pages'];
+        $language = $this->grav['language']->getActive();
         $live_page = $pages->find($route);
+        $english_page = $this->getPageInLanguage($live_page, 'en');
 
         if (!$live_page) {
             throw new \RuntimeException('No live page exists');
         }
 
         $template = $live_page->template();
-        $extension = str_replace($template, '', $live_page->name());
+        $extension = '.' . $language . '.md';
 
         // grab the WIP page header from data folder
-        $save_dir = self::SAVE_LOCATION . $route . DS . $live_page->name();
+        $save_dir = self::SAVE_LOCATION . $route . DS . $template . $extension;
         $file = $this->grav['locator']->findResource($save_dir);
         if ($file) {
             $wip_page = new Page;
             $wip_page->init(new \SplFileInfo($file), $extension);
-            $wip_page->header($this->mergeHeaders($wip_page, [$live_page]));
+            $wip_page->header($this->mergeHeaders($wip_page, [$english_page, $live_page]));
 
             if (empty($wip_page->rawMarkdown())) {
                 $wip_page->content($live_page->rawMarkdown());
             }
 
             $wip_page->media($live_page->media());
+            $wip_page->parent($live_page->parent());
             $pages->addPage($wip_page, $this->path);
         } else {
             throw new \RuntimeException('Nothing to preview. No translated page saved yet. Please save before previewing.');
@@ -359,6 +402,11 @@ class TranslatorPlugin extends Plugin
         // back to translators page if the logged in user cant access this language
         if (!$lang || !$user_langs || !$isAllowed) {
             $this->grav->redirect(self::$base_route);
+        }
+
+        // Force a default language as `from` - used if auto browser lang enabled
+        if (isset($this->configs['default_lang'])) {
+            $this->grav['language']->setActive($this->configs['default_lang']);
         }
 
         $filename = 'edit.md';
