@@ -197,7 +197,7 @@ class Api
             {
                 $api = $translate->translate($item['value'], [
                     'target' => $targetLanguage,
-                    'key'    => 'AIzaSyAHIf65pPmdRVz5FTW4Z-RVDcK5qOvd2dA'
+                    'key'    => ''
                 ]);
 
                 $result[] = [
