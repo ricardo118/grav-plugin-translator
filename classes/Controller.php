@@ -301,7 +301,7 @@ class Controller
         /** @var Twig $twig */
         $twig = $this->grav['twig']->init();
 
-        /** @var Email $twig */
+        /** @var Email $email */
         $email = $this->grav['Email'];
 
         $subject = "You have a new request for approval";

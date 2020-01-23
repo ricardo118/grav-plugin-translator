@@ -22,3 +22,6 @@ style:
       type: image/png
       size: 14215
       path: user/plugins/translator/images/grav-logo.png
+g_translate:
+  type: 'json'                                # The types of key, for now only json key works
+  key: 'user-data://key.json'                 # the location of the key, use a grav stream, like theme:// user-data:// plugin://
