@@ -187,7 +187,11 @@ class Api
 
     public function gtranslateEndpoint()
     {
-        $translate = new TranslateClient();
+
+        $translate = new TranslateClient([
+            'projectId' => 'grav translator',
+            'keyFilePath' => $this->grav['locator']->findResource($this->configs['g_translate']['key'])
+        ]);
         $result = [];
         $targetLanguage = $this->uri->param('lang');
 
@@ -196,8 +200,7 @@ class Api
             if (!empty($item['value']))
             {
                 $api = $translate->translate($item['value'], [
-                    'target' => $targetLanguage,
-                    'key'    => ''
+                    'target' => $targetLanguage
                 ]);
 
                 $result[] = [
