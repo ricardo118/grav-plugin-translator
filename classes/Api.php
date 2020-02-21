@@ -6,6 +6,7 @@ use Grav\Common\Language\LanguageCodes;
 use Grav\Common\Uri;
 use Grav\Plugin\TranslatorPlugin;
 use GuzzleHttp\Client;
+use RocketTheme\Toolbox\Event\Event;
 use RuntimeException;
 use Google\Cloud\Translate\V2\TranslateClient;
 
@@ -187,6 +188,7 @@ class Api
 
     public function gtranslateEndpoint()
     {
+        Grav::instance()->fireEvent('onBeforeGoogleTranslate');
 
         $translate = new TranslateClient([
             'projectId' => 'grav translator',
