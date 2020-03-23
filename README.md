@@ -57,6 +57,32 @@ style:
       type: image/png
       size: 14215
       path: user/plugins/translator/images/grav-logo.png
+g_translate:
+  type: 'json'
+  key: 'user-data://mykeyfile.json'         # the location for the json key. supports streams
+  lang_remap:                               # the lang remap utility
+    pt-BR: pt
+    pt-br: pt
+    pt-PT: pt
+    pt-pt: pt
+    br: pt
+    my: ms
+```
+
+## Google TRANSLATOR
+
+The plugin has a built in support for google translator. This enables you to get quick translations done which can then later be refined. This can help save money where you only need to hire translators to fix the translations rather than complete them from scratch.
+
+[Google Translate Language List](https://cloud.google.com/translate/docs/languages)
+
+The document above shows the list of languages supported by Google. The remap lets you use any language code your grav site and make it match to a google code.TRANSLATOR
+
+Example: "pt-PT" as a language code will not work for google. so we remap it by doing
+
+```yaml
+g_translate:
+  lang_remap:
+    pt-PT: pt
 ```
 
 Note that if you use the Admin Plugin, a file with your configuration named translator.yaml will be saved in the `user/config/plugins/`-folder once the configuration is saved in the Admin.

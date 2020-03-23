@@ -1,3 +1,10 @@
+# v1.1.1
+##  23/01/2020
+
+1. [](#improved)
+    * added lang remap config support for google translate
+    * added onBeforeGoogleTranslate Event so plugins can override the method for their own custom handling
+
 # v1.1.0
 ##  23/01/2020
 
