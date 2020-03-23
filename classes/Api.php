@@ -197,6 +197,11 @@ class Api
         $result = [];
         $targetLanguage = $this->uri->param('lang');
 
+        if (array_key_exists($targetLanguage, $this->configs['g_translate']['lang_remap']))
+        {
+            $targetLanguage = $this->configs['g_translate']['lang_remap'][$targetLanguage];
+        }
+
         foreach ($this->post['serializedForm'] as $item)
         {
             if (!empty($item['value']))
