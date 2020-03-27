@@ -2153,6 +2153,11 @@ a[data-change-language] {
     padding: 20px;
     background: #0006;
 }
+
+form[id="translated"] .translator-readonly {
+    pointer-events: none;
+}
+
 /* -----------------------------------
     2 - Responsive Styles
 ------------------------------------*/
