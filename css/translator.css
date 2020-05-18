@@ -2070,6 +2070,7 @@ form.login-form {
     background: var(--main-color);
     border: none;
     margin-right:8px;
+    margin-left:8px;
 }
 
 .footer .btn.btn-primary:hover {
