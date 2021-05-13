@@ -1,7 +1,7 @@
 # Slack for PHP
 
-[![Build Status](https://travis-ci.org/alek13/slack.svg?branch=master)](https://travis-ci.org/alek13/slack)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alek13/slack/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alek13/slack/?branch=master)
+[![Build Status](https://travis-ci.org/php-slack/slack.svg?branch=master)](https://travis-ci.org/php-slack/slack)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/php-slack/slack/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/php-slack/slack/?branch=master)
 [![Dependency Status](https://beta.gemnasium.com/badges/github.com/alek13/slack.svg)](https://beta.gemnasium.com/projects/github.com/alek13/slack)
 [![StyleCI](https://styleci.io/repos/116497800/shield)](https://styleci.io/repos/116497800)
 [![Slack Welcome](https://img.shields.io/badge/slack-welcome-brightgreen.svg)](https://join.slack.com/t/php-slack/shared_invite/enQtMjk1OTExNDkzMjg1LTk5ODg3MGE1OThlYzZlM2U0N2I5Y2FhM2NiYmFlMjE1MDNiOWRjMjc1ZDIwNWZlNzBkZWQ2ZWM1NzdmMjM5YzQ)
@@ -306,6 +306,10 @@ $attachment = new Attachment([]);
 
 $attachment->setFields($bigArrayOfFields);
 ```
+
+# Playground
+
+There is the [`php-slack/playground`](https://github.com/php-slack/playground) simple console script to test messaging and to see how messages looks really.
 
 # Questions
 

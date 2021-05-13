@@ -20,13 +20,14 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-gapic = gcp.GAPICGenerator()
+gapic = gcp.GAPICBazel()
 common = gcp.CommonTemplates()
 
 v1_library = gapic.php_library(
     service='translate',
     version='v3',
-    artman_output_name='google-cloud-translate-v3')
+    bazel_target='//google/cloud/translate/v3:google-cloud-translation-v3-php',
+)
 
 # copy all src except partial veneer classes
 s.move(v1_library / f'src/')
@@ -56,19 +57,6 @@ s.replace(
     r"\$transportConfig, and any \$serviceAddress",
     r"$transportConfig, and any `$apiEndpoint`")
 
-# prevent proto messages from being marked final
-s.replace(
-    "src/V*/**/*.php",
-    r"final class",
-    r"class")
-
-# Replace "Unwrapped" with "Value" for method names.
-s.replace(
-    "src/V*/**/*.php",
-    r"public function ([s|g]\w{3,})Unwrapped",
-    r"public function \1Value"
-)
-
 # fix year
 s.replace(
     'src/V3/**/*.php',
@@ -84,3 +72,35 @@ s.replace(
     'src/*/*_*.php',
     r'will be removed in the next major release',
     'will be removed in a future release')
+
+### [START] protoc backwards compatibility fixes
+
+# roll back to private properties.
+s.replace(
+    "src/**/V*/**/*.php",
+    r"Generated from protobuf field ([^\n]{0,})\n\s{5}\*/\n\s{4}protected \$",
+    r"""Generated from protobuf field \1
+     */
+    private $""")
+
+# prevent proto messages from being marked final
+s.replace(
+    "src/**/V*/**/*.php",
+    r"final class",
+    r"class")
+
+# Replace "Unwrapped" with "Value" for method names.
+s.replace(
+    "src/**/V*/**/*.php",
+    r"public function ([s|g]\w{3,})Unwrapped",
+    r"public function \1Value"
+)
+
+### [END] protoc backwards compatibility fixes
+
+# fix relative cloud.google.com links
+s.replace(
+    "src/**/V*/**/*.php",
+    r"(.{0,})\]\((/.{0,})\)",
+    r"\1](https://cloud.google.com\2)"
+)

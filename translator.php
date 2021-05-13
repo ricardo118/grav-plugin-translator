@@ -1,6 +1,7 @@
 <?php
 namespace Grav\Plugin;
 
+use Composer\Autoload\ClassLoader;
 use Grav\Common\Grav;
 use Grav\Common\Language\Language;
 use Grav\Common\Language\LanguageCodes;
@@ -45,8 +46,21 @@ class TranslatorPlugin extends Plugin
     public static function getSubscribedEvents() : array
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 0]
+            'onPluginsInitialized' => [
+                ['autoload', 100000], // TODO: Remove when plugin requires Grav >=1.7
+                ['onPluginsInitialized', 0],
+            ]
         ];
+    }
+
+    /**
+     * Composer autoload.
+     *is
+     * @return ClassLoader
+     */
+    public function autoload(): ClassLoader
+    {
+        return require __DIR__ . '/vendor/autoload.php';
     }
 
     /**
@@ -68,8 +82,6 @@ class TranslatorPlugin extends Plugin
            return;
         }
 
-        $this->autoload();
-
         if (!$this->continuePlugin()) {
             return;
         }
@@ -77,17 +89,6 @@ class TranslatorPlugin extends Plugin
         $this->enable([
             'onTwigTemplatePaths' => ['onTwigTemplatePaths', 1]
         ]);
-    }
-
-    /**
-     * Load the required Classes
-     */
-    public function autoload() : void
-    {
-        require_once __DIR__ . '/vendor/autoload.php';
-        require_once __DIR__ . '/classes/Controller.php';
-        require_once __DIR__ . '/classes/Slack.php';
-        require_once __DIR__ . '/classes/Api.php';
     }
 
     /**
@@ -128,8 +129,8 @@ class TranslatorPlugin extends Plugin
 
             case self::EDIT:
                 $this->enable([
-                    'onPagesInitialized'           => ['addEditPage', 0],
-                    'onTwigSiteVariables'          => ['addEditPageVariables', 0],
+                    'onPagesInitialized'                 => ['addEditPage', 0],
+                    'onTwigSiteVariables'                => ['addEditPageVariables', 0],
                     'onTask.translator.save'             => ['taskController', 0],
                     'onTask.translator.keep.alive'       => ['taskController', 0],
                     'onTask.translator.request.approval' => ['taskController', 0]

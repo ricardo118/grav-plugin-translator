@@ -366,10 +366,9 @@ class Client
      *
      * @throws \RuntimeException
      */
-    public function sendMessage(Message $message, $blocks)
+    public function sendMessage(Message $message)
     {
         $payload = $this->preparePayload($message);
-        $payload['blocks'] = $blocks;
 
         $encoded = json_encode($payload, JSON_UNESCAPED_UNICODE);
 

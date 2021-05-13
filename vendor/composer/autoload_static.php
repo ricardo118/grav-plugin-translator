@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
+class ComposerStaticInita05e784122266afd0c8fac2768f0322b
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -14,10 +14,15 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
     );
 
     public static $prefixLengthsPsr4 = array (
+        'R' => 
+        array (
+            'Rize\\' => 5,
+        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\Cache\\' => 10,
         ),
         'M' => 
@@ -32,6 +37,7 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
             'GuzzleHttp\\' => 11,
             'Grpc\\Gcp\\' => 9,
             'Grpc\\' => 5,
+            'Grav\\Plugin\\Translator\\' => 23,
             'Google\\Protobuf\\' => 16,
             'Google\\Cloud\\Translate\\' => 23,
             'Google\\Cloud\\Core\\' => 18,
@@ -41,6 +47,7 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
             'GPBMetadata\\Google\\Protobuf\\' => 28,
             'GPBMetadata\\Google\\Cloud\\Translate\\' => 35,
             'GPBMetadata\\Google\\' => 19,
+            'GPBMetadata\\ApiCore\\' => 20,
         ),
         'F' => 
         array (
@@ -49,6 +56,10 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
     );
 
     public static $prefixDirsPsr4 = array (
+        'Rize\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rize/uri-template/src/Rize',
+        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
@@ -56,6 +67,10 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
         'Psr\\Cache\\' => 
         array (
@@ -88,6 +103,10 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
         'Grpc\\' => 
         array (
             0 => __DIR__ . '/..' . '/grpc/grpc/src/lib',
+        ),
+        'Grav\\Plugin\\Translator\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/classes',
         ),
         'Google\\Protobuf\\' => 
         array (
@@ -124,7 +143,10 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
         'GPBMetadata\\Google\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/common-protos/metadata',
-            1 => __DIR__ . '/..' . '/google/gax/metadata',
+        ),
+        'GPBMetadata\\ApiCore\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/gax/metadata/ApiCore',
         ),
         'Firebase\\JWT\\' => 
         array (
@@ -132,27 +154,22 @@ class ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55
         ),
     );
 
-    public static $fallbackDirsPsr4 = array (
-        0 => __DIR__ . '/..' . '/google/grpc-gcp/src/generated',
-    );
-
-    public static $prefixesPsr0 = array (
-        'R' => 
-        array (
-            'Rize\\UriTemplate' => 
-            array (
-                0 => __DIR__ . '/..' . '/rize/uri-template/src',
-            ),
-        ),
+    public static $classMap = array (
+        'GPBMetadata\\GrpcGcp' => __DIR__ . '/..' . '/google/grpc-gcp/src/generated/GPBMetadata/GrpcGcp.php',
+        'Grav\\Plugin\\TranslatorPlugin' => __DIR__ . '/../..' . '/translator.php',
+        'Grpc\\Gcp\\AffinityConfig' => __DIR__ . '/..' . '/google/grpc-gcp/src/generated/Grpc/Gcp/AffinityConfig.php',
+        'Grpc\\Gcp\\AffinityConfig_Command' => __DIR__ . '/..' . '/google/grpc-gcp/src/generated/Grpc/Gcp/AffinityConfig_Command.php',
+        'Grpc\\Gcp\\ApiConfig' => __DIR__ . '/..' . '/google/grpc-gcp/src/generated/Grpc/Gcp/ApiConfig.php',
+        'Grpc\\Gcp\\ChannelPoolConfig' => __DIR__ . '/..' . '/google/grpc-gcp/src/generated/Grpc/Gcp/ChannelPoolConfig.php',
+        'Grpc\\Gcp\\MethodConfig' => __DIR__ . '/..' . '/google/grpc-gcp/src/generated/Grpc/Gcp/MethodConfig.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit29ab2347ea8226d1ea8129cfb8fdfc55::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita05e784122266afd0c8fac2768f0322b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita05e784122266afd0c8fac2768f0322b::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInita05e784122266afd0c8fac2768f0322b::$classMap;
 
         }, null, ClassLoader::class);
     }

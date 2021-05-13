@@ -1,6 +1,30 @@
 {
+    "name": "ricardo118/grav-plugin-translator",
+    "type": "grav-plugin",
+    "description": "The TRANSLATOR Plugin is an extension for Grav CMS.",
+    "keywords": ["plugin"],
+    "homepage": "https://github.com/ricardo118/grav-plugin-translator",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ricardo",
+            "email": "ricardo@urbansquid.london",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "alek13/slack": "^1.10",
         "google/cloud-translate": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Grav\\Plugin\\Translator\\": "classes/"
+        },
+        "classmap":  ["translator.php"]
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
     }
 }

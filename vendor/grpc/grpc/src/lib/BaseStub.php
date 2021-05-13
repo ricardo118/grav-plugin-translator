@@ -43,14 +43,8 @@ class BaseStub
      */
     public function __construct($hostname, $opts, $channel = null)
     {
-        if (!method_exists('ChannelCredentials', 'isDefaultRootsPemSet')) {
-            // for backwards compatibility
-            // isDefaultRootsPemSet() may not be defined if the pecl extension
-            // is not upgraded
-            $ssl_roots = file_get_contents(
-                dirname(__FILE__).'/../../etc/roots.pem'
-            );
-        } elseif (!ChannelCredentials::isDefaultRootsPemSet()) {
+        if (!method_exists('ChannelCredentials', 'isDefaultRootsPemSet') ||
+            !ChannelCredentials::isDefaultRootsPemSet()) {
             $ssl_roots = file_get_contents(
                 dirname(__FILE__).'/../../etc/roots.pem'
             );
@@ -429,9 +423,9 @@ class BaseStub
                     $method,
                     $argument,
                     $deserialize,
+                    $this->_UnaryUnaryCallFactory($channel->getNext()),
                     $metadata,
-                    $options,
-                    $this->_UnaryUnaryCallFactory($channel->getNext())
+                    $options
                 );
             };
         }
@@ -458,9 +452,9 @@ class BaseStub
                     $method,
                     $argument,
                     $deserialize,
+                    $this->_UnaryStreamCallFactory($channel->getNext()),
                     $metadata,
-                    $options,
-                    $this->_UnaryStreamCallFactory($channel->getNext())
+                    $options
                 );
             };
         }
@@ -485,9 +479,9 @@ class BaseStub
                 return $channel->getInterceptor()->interceptStreamUnary(
                     $method,
                     $deserialize,
+                    $this->_StreamUnaryCallFactory($channel->getNext()),
                     $metadata,
-                    $options,
-                    $this->_StreamUnaryCallFactory($channel->getNext())
+                    $options
                 );
             };
         }
@@ -512,9 +506,9 @@ class BaseStub
                 return $channel->getInterceptor()->interceptStreamStream(
                     $method,
                     $deserialize,
+                    $this->_StreamStreamCallFactory($channel->getNext()),
                     $metadata,
-                    $options,
-                    $this->_StreamStreamCallFactory($channel->getNext())
+                    $options
                 );
             };
         }
