@@ -251,6 +251,21 @@ $('[data-g-translate]').on('click',function(e) {
         success: function (data) {
             updateTranslations(data);
         },
+        error: function (xhr) {
+            console.log(xhr.status);
+            const json = JSON.parse(xhr.responseText);
+            let message = json.error.message;
+
+            try {
+                message = JSON.parse(message);
+                console.log(message);
+                $('#overlay h1').text('Error occurred: ' + message.error.message);
+            } catch (e) {
+                $('#overlay h1').text('Error occurred');
+            }
+
+            setTimeout(function(){ $('#overlay').fadeOut(); }, 2000);
+        }
     });
 });
 

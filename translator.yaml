@@ -6,6 +6,7 @@ fields:                                     # Which fields the plugin allows for
   - editor
   - ckeditor
   - markdown
+  - section
 slack:
   enabled: false                            # Enable slack notifications
   webhook: ''                               # The webhook URL - generate your own via slack developer app
@@ -25,3 +26,4 @@ style:
 g_translate:
   type: 'json'                                # The types of key, for now only json key works
   key: 'user-data://key.json'                 # the location of the key, use a grav stream, like theme:// user-data:// plugin://
+lang_remap: []

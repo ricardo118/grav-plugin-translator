@@ -77,7 +77,6 @@ class Api
             $messages->add($e->getMessage(), 'error');
             $this->grav['log']->error('plugin.translator: '. $e->getMessage());
         }
-
         return $success;
     }
 
@@ -197,7 +196,7 @@ class Api
         $result = [];
         $targetLanguage = $this->uri->param('lang');
 
-        if (array_key_exists($targetLanguage, $this->configs['g_translate']['lang_remap']))
+        if (isset($this->configs['g_translate']['lang_remap']) && array_key_exists($targetLanguage, $this->configs['g_translate']['lang_remap']))
         {
             $targetLanguage = $this->configs['g_translate']['lang_remap'][$targetLanguage];
         }
